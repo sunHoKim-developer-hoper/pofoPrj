@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.pofo.pofoapiboot3.repository.EmailRepository">
+
+
+    	<!-- 기존 가입된 이메일인지 확인 -->
+	<select id="countEmail" resultType="int">
+		select
+			count(email)
+		from
+			member
+		where
+			email = #{email}
+	</select>
+
+	<select id="findId" parameterType="String" resultType="String">
+		select 
+			username 
+		from 
+			member 
+		where 
+			email = #{email}
+	</select>
+
+    	<select id="findEmail" resultType="int">
+		select
+			count(email)
+		from
+			member
+		where
+			email = '${uid}'
+	</select>
+
+	<select id="uuidCheck" resultType="String">
+		select
+			count(email)
+		from
+			member
+		where
+			uuid = #{uuid}
+	</select>
+	<update id="modifyPwd">
+	update
+		 member set pwd  = #{pwd} 
+		 	where uuid = #{uuid}
+	</update>
+</mapper>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="kr.co.pofo.pofoapiboot3.repository.PortfolioRepository">
+	<resultMap id="portfolioViewResultMap" type="PortfolioView">
+		<result property="memberId" column="member_id" />
+		<result property="regDate" column="reg_date" />
+		<result property="deleteDate" column="delete_date" />
+		<result property="likeCount" column="like_count" />
+		<result property="skillIds" column="skill_ids" />
+	</resultMap>
+	<resultMap id="weeklyPopularPortfolioViewResultMap" type="WeeklyPopularPortfolioView">
+		<result property="memberId" column="member_id" />
+		<result property="regDate" column="reg_date" />
+		<result property="deleteDate" column="delete_date" />
+		<result property="likeCount" column="like_count" />
+	</resultMap>
+
+	<!-- 디폴트 포트폴리오 리스트 -->
+	<select id="findViewAll" resultMap="portfolioViewResultMap">
+		select *
+		from index_portfolio_view
+		where 1 = 1
+		<if test="skillId != null">
+			and FIND_IN_SET('${skillId}', skill_ids) > 0
+		</if>
+		<if test="collaboration != null">
+			and collaboration = '${collaboration}'
+		</if>
+		order by
+		<choose>
+			<when test="sort == 'likes'">
+				like_count desc
+			</when>
+			<otherwise>
+				reg_date desc
+			</otherwise>
+		</choose>
+		limit ${size} offset ${offset}
+	</select>
+
+	<!-- 스택 검색 -->
+	<select id="findSkillIdsByQuery" resultType="int">
+		SELECT id
+		FROM skill 
+		WHERE 
+			eng_name LIKE CONCAT('%', #{query}, '%') 
+			OR 
+			kor_name LIKE CONCAT('%', #{query}, '%')
+	</select>
+
+	<!-- 검색된 포트폴리오 리스트 -->
+	<select id="findViewAllByQuery" resultMap="portfolioViewResultMap">
+		select *
+		from index_portfolio_view
+		where 1 = 1
+		<if test="skillIds.length > 0">
+			<if test="skillIds.length == 1">
+				AND (
+					FIND_IN_SET(#{skillIds[0]}, skill_ids) > 0
+					or title like concat('%', #{query}, '%')
+				)
+			</if>
+			<if test="skillIds.length > 1">
+				AND (
+				<foreach collection="skillIds" item="skillId" separator=" OR ">
+					FIND_IN_SET(#{skillId}, skill_ids) > 0
+				</foreach>
+				or title like concat('%', #{query}, '%')
+				)
+			</if>
+		</if>
+		<if test="skillIds.length == 0">
+			and title like concat('%', #{query}, '%')
+		</if>
+
+		<if test="collaboration != null">
+			and collaboration = #{collaboration}
+		</if>
+		order by
+		<choose>
+			<when test="sort == 'likes'">
+				like_count desc
+			</when>
+			<otherwise>
+				reg_date desc
+			</otherwise>
+		</choose>
+		limit #{size} offset #{offset}
+	</select>
+
+	<!-- 이번주 인기 포트폴리오 리스트 -->
+	<select id="findWeeklyPopularViewAll" resultMap="weeklyPopularPortfolioViewResultMap">  
+		select *
+		from weekly_popular_portfolio_view
+		limit 10
+	</select>
+
+    <!-- Portfolio -->
+    <select id="findPortfolioById" parameterType="int" resultType="Portfolio">
+        select * from portfolio where id = #{id}
+    </select>
+
+	<select id="findByUserId" parameterType="int" resultType="Portfolio">
+        select * from portfolio where member_id = #{id}
+		order by reg_date desc
+    </select>
+
+	<select id="countOfhits" parameterType="int" resultType="Integer">
+        select sum(hit) from portfolio where member_id = ${id};
+    </select>
+
+	<!-- Detail -->
+	<select id="findMorePortfolio" parameterType="Integer" resultType="Portfolio">
+		SELECT
+			*
+		FROM
+			portfolio
+		WHERE
+			member_id = #{memberId}
+		AND
+			id != #{currentPortfolioId}
+	</select>
+
+	<!-- 조회수 증가 -->
+	<update id="updateHitCount" parameterType="Portfolio">
+		update portfolio
+		set hit = hit+1
+		where id = #{id};
+	</update>
+
+
+	<!-- 등록 -->
+	<insert id="regPofo" parameterType="Portfolio">
+	<!-- <selectKey keyProperty="id" resultType="Integer" order="AFTER">
+    SELECT LAST_INSERT_ID()
+  </selectKey> -->
+		insert into portfolio(member_id,title,thumbnail,collaboration)
+		values(#{memberId},#{title},#{thumbnail},#{collaboration});
+	</insert>
+
+
+	<select id="findByTitleAndMemberId" resultType="int">
+		select
+			id
+		from
+			portfolio
+		where
+			title = #{title}
+		and
+			member_id = ${memberId}
+	</select>
+
+
+	<insert id="regContent" parameterType="portfolioContents">
+        INSERT INTO
+            portfolio_contents(portfolio_id, content,type,orders)
+        VALUES
+            (#{portfolioId},#{content},#{type},#{orders})
+    </insert>
+</mapper>

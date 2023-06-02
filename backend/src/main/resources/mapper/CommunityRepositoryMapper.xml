@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="kr.co.pofo.pofoapiboot3.repository.CommunityRepository">
+	<resultMap id="communityResultMap" type="Community">
+		<result property="memberId" column="member_id" />
+		<result property="onlineType" column="online_type" />
+		<result property="locationInfo" column="location_info" />
+		<result property="teamSize" column="team_size" />
+		<result property="regDate" column="reg_date" />
+		<result property="deleteDate" column="delete_date" />
+	</resultMap>
+	<resultMap id="communityViewResultMap" type="CommunityView">
+		<result property="memberId" column="member_id" />
+		<result property="onlineType" column="online_type" />
+		<result property="locationInfo" column="location_info" />
+		<result property="teamSize" column="team_size" />
+		<result property="regDate" column="reg_date" />
+		<result property="deleteDate" column="delete_date" />
+	</resultMap>
+
+	<!-- 커뮤니티 등록 -->
+	<insert id="insert" parameterType="Community">
+		insert into community(member_id, title, online_type, location_info,
+		period, team_size, thumbnail)
+		values(#{memberId}, #{title}, #{onlineType}, #{locationInfo}, #{period}, #{teamSize},
+		#{thumbnail})
+	</insert>
+
+	<!-- 커뮤니티 id 조회 -->
+	<select id="findIdByMemberId" resultType="Long">
+		select id
+		from community
+		where member_id = #{memberId}
+		order by reg_date desc
+		limit 1 offset 0
+	</select>
+	
+	<!-- 커뮤니티 목록조회 -->
+	<select id="findViewAll" resultMap="communityViewResultMap">
+		select *
+		from community_view
+	</select>
+
+	<!-- 커뮤니티 상세조회 -->
+	<select id="findById" resultMap="communityViewResultMap">
+		select *
+		from community_view
+		where id = #{id}
+	</select>
+	
+	<update id="updateCloseFlag">
+	
+		update
+			community
+		set
+			close_flag = 1
+		where
+			id = ${id}
+	</update>
+
+</mapper>
+    

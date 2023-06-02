@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.pofo.pofoapiboot3.repository.NotificationRepository">
+
+<resultMap id="notificationResultMap" type="Notification">
+		<result property="regDate" column="reg_date" />
+		<result property="toMemberId" column="to_member_id" />
+		<result property="fromMemberId" column="from_member_id" />
+		<result property="clickFlag" column="click_flag" />
+		<result property="typeId" column="type_id" />
+		<result property="portfolioId" column="portfolio_id" />
+		<result property="communityId" column="community_id" />
+        <result property="acceptFlag" column="accept_flag" />
+</resultMap>
+
+    <insert id="insert">
+        INSERT INTO
+            notification
+        VALUES
+            (DEFAULT, #{typeId}, #{fromMemberId}, #{toMemberId}, DEFAULT, #{portfolioId}, #{communityId}, DEFAULT, DEFAULT)
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM
+            notification
+        WHERE
+            type_id = #{typeId}
+        AND
+            from_member_id = #{fromMemberId}
+        AND
+            to_member_id = #{toMemberId}
+        <choose>
+            <when test="portfolioId != null">
+                AND
+                    portfolio_id = #{portfolioId}
+                AND
+                    community_id IS NULL
+            </when>
+            <otherwise>
+                AND
+                    portfolio_id IS NULL
+                AND
+                    community_id = #{communityId}
+            </otherwise>
+        </choose>
+    </delete>
+
+    <select id="findById" resultMap="notificationResultMap">
+		select
+            n.id,
+		 	n.from_member_id,
+			n.to_member_id,
+			n.reg_date,
+			n.type_id,
+			n.click_flag,
+			n.portfolio_id,
+			n.community_id,
+            n.accept_flag,
+			t.url as url,
+			m.image,
+			m.nickname
+		from
+			notification n
+		inner join
+			notification_type t
+		on
+			n.type_id = t.id
+		inner join
+			member m
+		on
+			m.id = n.from_member_id
+		where
+			n.to_member_id = ${id}
+		order by
+			n.reg_date desc
+	</select>
+
+    <insert id="insertFromProfile">
+        INSERT INTO
+            notification
+            (from_member_id,to_member_id,type_id)
+        VALUES
+            (${fromMemberId}, ${toMemberId}, ${type})
+    </insert>
+
+
+    <update id="updateFlag">
+
+        update 
+            notification
+        set
+            click_flag = 1
+        where
+            id = ${id}
+    
+    </update>
+
+    <delete id="deleteById">
+        delete
+            from
+        notification
+        where
+            id = ${id}
+    </delete>
+
+    <!-- 팀 신청 확인 -->
+    <select id="existsBy" resultMap="notificationResultMap">
+        select * 
+        from notification
+        where
+            type_id = 4
+            and from_member_id = #{fromMemberId}
+            and to_member_id = #{toMemberId}
+            and community_id = #{communityId}
+    </select>
+
+    <update id="updateAcceptFlag">
+        update notification
+        set
+            accept_flag = 1
+        where
+            id = ${id}
+    </update>
+
+    <update id="updateRejectFlag">
+        update notification
+        set
+            accept_flag = 2
+        where
+            id = ${id}
+    </update>
+
+</mapper>

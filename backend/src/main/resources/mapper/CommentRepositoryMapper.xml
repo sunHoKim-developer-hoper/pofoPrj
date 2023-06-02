@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.pofo.pofoapiboot3.repository.CommentRepository">
+
+    <select id="findComments" resultType="Comment">
+        SELECT
+            *
+        FROM
+            comment
+        WHERE
+            portfolio_id = #{portfolioId}
+        ORDER BY
+            reg_date DESC
+    </select>
+
+    <select id="findCommentViews" resultType="CommentView">
+        SELECT
+            c.*,
+            m.nickname AS member_nickname,
+            m.image AS member_image
+        FROM
+            comment AS c
+        INNER JOIN
+            member AS m
+        ON
+            c.member_id = m.id
+        WHERE
+            c.portfolio_id = #{portfolioId}
+        ORDER BY
+            c.reg_date DESC
+    </select>
+
+    <insert id="insert">
+        INSERT INTO
+            comment
+        VALUES(
+            DEFAULT,
+            #{memberId},
+            #{portfolioId},
+            #{content},
+            DEFAULT
+        );
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM
+            comment
+        WHERE
+            id = #{id}
+    </delete>
+</mapper>

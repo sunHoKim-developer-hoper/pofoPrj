@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.pofo.pofoapiboot3.repository.SkillRepository">
+    <!-- Skill -->
+    <select id="findAll" resultType="Skill">
+        SELECT
+            *
+        FROM
+            skill
+    </select>
+
+    <insert id="insertSkill">
+        INSERT INTO
+            skill(portfolio_id, eng_name, kor_name)
+        VALUES
+            (#{portfolioId}, #{engName}, #{korName})
+    </insert>
+
+    <update id="updateSkill">
+        UPDATE
+            skill
+        SET
+            eng_name = #{engName},
+            kor_name = #{korName}
+        WHERE
+            id = #{id}
+    </update>
+
+    <delete id="deleteSkill">
+        DELETE FROM
+            skill
+        WHERE
+            id = #{id}
+    </delete>
+
+    <!-- UsedSkill -->
+    <select id="findSkillsByPortfolioId" parameterType="Integer" resultType="Skill">
+        SELECT
+            skill.*
+        FROM
+            used_skill
+        LEFT JOIN
+            skill
+        ON
+            used_skill.skill_id = skill.id
+        WHERE
+            portfolio_id = ${id}
+    </select>
+
+   
+
+    <!-- <insert id="insertUsedSkill" parameterType="UsedSkill">
+        INSERT INTO
+            used_skill(portfolio_id, communitiy_id, skill_id)
+        VALUES
+             <foreach collection="skills" item="skill" separator=",">
+                (#{skill.portfolioId}, #{skill.recruitId}, #{skill.skillId})
+             </foreach>
+    </insert> -->
+
+
+    <!-- <insert id="insertUsedSkill" parameterType="java,util.map">
+        INSERT INTO
+            used_skill(portfolio_id, communitiy_id, skill_id)
+        VALUES
+             <foreach collection="skills" item="skill" separator=",">
+                (#{skill.portfolioId}, #{skill.recruitId}, #{skill.skillId})
+             </foreach>
+    </insert> -->
+    <insert id="insertUsedSkill" parameterType="UsedSkill">
+    INSERT INTO used_skill (portfolio_id, skill_id)
+    VALUES
+             <foreach collection="skills" item="skill" separator=",">
+                (#{id}, #{skill})
+             </foreach>
+</insert>
+    
+    <update id="updateUsedSkill">
+        UPDATE
+            skill
+        SET
+            portfolio_id = #{portfolioId},
+            recruit_id = #{recruitId},
+            skill_id = #{skillId}
+        WHERE
+            id = #{id}
+    </update>
+
+    <delete id="deleteUsedSkill">
+        DELETE FROM
+            skill
+        WHERE
+            id = #{id}
+    </delete>
+
+</mapper>

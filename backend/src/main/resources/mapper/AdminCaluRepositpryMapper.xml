@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.pofo.pofoapiboot3.repository.AdminCalcuRepository">
+
+  <select id="todayVisitCount" resultType="String">
+select growth_rate,' ',change_status from visit_view
+LIMIT 1;
+  </select>
+
+  <select id="memberDiff" resultType="String">
+    select diff_percent , status  from member_diff_view;
+  </select>
+
+  <select id="AdminLogin" resultType="String">
+     SELECT * FROM admin_account WHERE admin_id = #{admin_id} AND admin_pwd = #{admin_pwd}
+  </select>
+</mapper>
