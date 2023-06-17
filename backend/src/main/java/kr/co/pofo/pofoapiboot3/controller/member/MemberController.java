@@ -28,6 +28,7 @@ import kr.co.pofo.pofoapiboot3.service.CommunityService;
 import kr.co.pofo.pofoapiboot3.service.MemberService;
 import kr.co.pofo.pofoapiboot3.service.PortfolioLikeService;
 import kr.co.pofo.pofoapiboot3.service.PortfolioService;
+import kr.co.pofo.pofoapiboot3.util.FileUpload;
 
 @RestController
 @RequestMapping("/members")
@@ -43,12 +44,11 @@ public class MemberController {
     private CollectionsService collectionsService;
     @Autowired
     private ActivitiesService activitiesService;
-
-    @Autowired
-    private HttpServletRequest request;
-
     @Autowired
     private CommunityService communityService;
+
+    @Autowired
+    private FileUpload fileUpload;
 
     @GetMapping("/myprofile/{id}")
     public ResponseEntity<Map<String, Object>> myProfile(@PathVariable("id") int id) {
@@ -75,11 +75,11 @@ public class MemberController {
     }
 
     @PutMapping("modify")
-    public String modifyInfo(@RequestParam(required = false) MultipartFile profile, Member member) {
+    public String modifyInfo(@RequestParam(required = false) MultipartFile profile, Member member,HttpServletRequest request) {
         String modifiedName = "";
         if (profile !=null && !profile.isEmpty()) {
-            modifiedName= modifyImgName(profile.getOriginalFilename(), member.getId());
-            upload(profile, modifiedName);
+            modifiedName= fileUpload.modifyImgName(profile.getOriginalFilename());
+            fileUpload.upload(profile, modifiedName, member.getImage());
             member.setImage(modifiedName);
         }
         service.modifyInfo(member);
@@ -91,22 +91,5 @@ public class MemberController {
             e.printStackTrace();
         }
         return "ok";
-    }
-
-    public void upload(MultipartFile img, String modifiedName) {
-        String urlPath = "/profileImage" + File.separator + modifiedName;
-        String realPath = request.getServletContext().getRealPath(urlPath);
-        try {
-            img.transferTo(new File(realPath));
-        } catch (IllegalStateException | IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String modifyImgName(String originalName, Integer id) {
-        int index = originalName.lastIndexOf(".");
-        String extension = originalName.substring(index);
-        String modifiedName = "profile" + id + extension;
-        return modifiedName;
     }
 }

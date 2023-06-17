@@ -33,6 +33,23 @@ public class FileUpload {
         }
     }
 
+    public void upload(MultipartFile img, String modifiedName, String image) {
+        
+        String urlPath = "profileImage/";
+        String realPath = request.getServletContext().getRealPath(urlPath+modifiedName);
+        //기존 이미지 파일
+        String preImagePath = request.getServletContext().getRealPath(urlPath+image);
+        try {
+            File file = new File(preImagePath);
+            if(file.exists())
+                file.delete();
+            img.transferTo(new File(realPath));
+        } catch (IllegalStateException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public String modifyImgName(String originalName) {
         int index = originalName.lastIndexOf(".");
         String extension = originalName.substring(index);

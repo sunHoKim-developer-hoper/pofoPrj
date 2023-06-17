@@ -201,6 +201,8 @@ async function modifyInfo() {
         formData.append("nickname", nickname.value);
     if (pwd.value)
         formData.append("pwd", pwd.value);
+    if (userDetails.profileSrc)
+        formData.append("image", userDetails.profileSrc);
 
     formData.append("id", userDetails.id);
     let response = await fetch("http://localhost:8080/members/modify", {
