@@ -1,7 +1,7 @@
 import { createApp } from "vue";
 import { createRouter, createWebHashHistory } from "vue-router";
 import { createPinia } from "pinia";
-import piniaPersist from "pinia-plugin-persist";
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from "./App.vue";
 
 import vue3GoogleLogin from "vue3-google-login";
@@ -73,7 +73,7 @@ const router = createRouter({
   routes, // short for `routes: routes`
 });
 const pinia = createPinia();
-pinia.use(piniaPersist);
+pinia.use(piniaPluginPersistedstate)
 
 // 카카오톡 공유하기
 import "@/api/kakao.min.js";
