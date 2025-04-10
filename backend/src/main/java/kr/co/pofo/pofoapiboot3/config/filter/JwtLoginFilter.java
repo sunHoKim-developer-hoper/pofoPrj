@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.co.pofo.pofoapiboot3.config.user.AppUserDetails;
+import kr.co.pofo.pofoapiboot3.config.appUserDetails.AppUserDetails;
 import kr.co.pofo.pofoapiboot3.entity.LoginRequest;
 import kr.co.pofo.pofoapiboot3.util.JwtTokenProvider;
 

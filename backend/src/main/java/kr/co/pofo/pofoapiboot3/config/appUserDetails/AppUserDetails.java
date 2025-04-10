@@ -1,4 +1,4 @@
-package kr.co.pofo.pofoapiboot3.config.user;
+package kr.co.pofo.pofoapiboot3.config.appUserDetails;
 
 import java.util.Collection;
 import java.util.List;
