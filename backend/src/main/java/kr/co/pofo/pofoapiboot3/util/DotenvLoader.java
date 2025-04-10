@@ -10,6 +10,7 @@ public class DotenvLoader {
         System.setProperty("DB_URL", dotenv.get("DB_URL"));
         System.setProperty("DB_PASS", dotenv.get("DB_PASS"));
         System.setProperty("DB_USER", dotenv.get("DB_URL"));
+        System.setProperty("JWT_SECRETE_KEY", dotenv.get("JWT_SECRETE_KEY"));
 
         /*Dotenv dotenv = Dotenv.configure()
            .directory("/path/to/directory")  // 디렉토리만 지정

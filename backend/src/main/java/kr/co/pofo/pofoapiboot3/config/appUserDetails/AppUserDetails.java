@@ -1,4 +1,4 @@
-package kr.co.pofo.pofoapiboot3.config;
+package kr.co.pofo.pofoapiboot3.config.user;
 
 import java.util.Collection;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Configuration
-public class PofoUserDetails implements UserDetails {
+public class AppUserDetails implements UserDetails {
 
 	private Integer id;
 	private String email;
@@ -91,7 +91,7 @@ public class PofoUserDetails implements UserDetails {
 
 	@Override
 	public String toString() {
-		return "PofoUserDetails [id=" + id + ", email=" + email + ", username=" + username + ", password=" + password
+		return "AppUserDetails [id=" + id + ", email=" + email + ", username=" + username + ", password=" + password
 				+ ", authorities=" + authorities + "]";
 	}
 

@@ -42,6 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 //JWT는 stateless 방식이다 == Not Session 방식 -> 로그인 후 서버는 아무 것도 저장하지 않는다. 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
+            // else로 유효하지 않은 토큰에 대한 로직을 추가하지 않은 이유는,, 모든 사용자가 갈 수 있는 화면에 대한 처리를 위함
         }
         filterChain.doFilter(request, response);
     }

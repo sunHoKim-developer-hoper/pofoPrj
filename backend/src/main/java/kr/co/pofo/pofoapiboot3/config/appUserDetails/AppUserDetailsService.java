@@ -1,4 +1,4 @@
-package kr.co.pofo.pofoapiboot3.config;
+package kr.co.pofo.pofoapiboot3.config.appUserDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import kr.co.pofo.pofoapiboot3.entity.Member;
 import kr.co.pofo.pofoapiboot3.repository.MemberRepository;
 
 @Service
-public class PofoUserDetailService implements UserDetailsService{
+public class AppUserDetailsService implements UserDetailsService{
 	@Autowired
 	private MemberRepository repository;
 	
@@ -27,7 +27,7 @@ public class PofoUserDetailService implements UserDetailsService{
 		authorities.add(new SimpleGrantedAuthority("ROLE_MEMBER"));
 		
 		// 데이터가 준비되었으면 이제 UserDetails 그릇 객체를 만들어서 데이터 담아서 반환해주면 끝!!
-		PofoUserDetails user = new PofoUserDetails();
+		AppUserDetails user = new AppUserDetails();
 		user.setId(member.getId());
 		user.setUsername(member.getEmail());
 		user.setPassword(member.getPwd());

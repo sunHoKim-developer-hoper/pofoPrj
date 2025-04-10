@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.co.pofo.pofoapiboot3.config.PofoUserDetails;
+import kr.co.pofo.pofoapiboot3.config.user.AppUserDetails;
 import kr.co.pofo.pofoapiboot3.entity.LoginRequest;
 import kr.co.pofo.pofoapiboot3.util.JwtTokenProvider;
 
@@ -36,7 +36,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         try {
             //userDetails 객체는 보안 로직을 위한 갹체이므로 사용하지 않는 것이 적합
             LoginRequest loginRequest = mapper.readValue(request.getInputStream(), LoginRequest.class);
-            //loadUserByUsername이 자동적으로 실행돼서 SecurityContext에 사용자 정보 저장 PofoUserDetails user = (PofoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            //loadUserByUsername이 자동적으로 실행돼서 SecurityContext에 사용자 정보 저장 AppUserDetails user = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()); //비밀번호 비교도 Spring Security가 대신 도와준다.
             return authenticationManager.authenticate(authToken);
         } catch (IOException e) {
@@ -45,7 +45,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
     }
     //로그인 성공 시 !!
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, Authentication authResult) throws IOException{  
-        String email = ((PofoUserDetails) authResult.getPrincipal()).getEmail();
+        String email = ((AppUserDetails) authResult.getPrincipal()).getEmail();
         String token = jwtTokenProvider.generateToken(email);
         response.setContentType("application/json");
         response.getWriter().write("{\"token\": \"" + token + "\"}");
